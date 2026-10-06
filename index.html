@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>⚖️ El Día de Alex: ¡Encuentra el Equilibrio!</title>
+  <meta name="description" content="Recurso educativo interactivo para aprender a usar la tecnología con equilibrio: tiempo, descansos, postura, luz y movimiento.">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- Canvas para partículas de confeti -->
+  <canvas id="confetti-canvas"></canvas>
+
+  <div id="game-app">
+    <!-- BARRA SUPERIOR / HUD -->
+    <header id="game-header">
+      <div class="header-left">
+        <button id="btn-map" class="hud-btn" title="Ir al mapa de misiones" aria-label="Ir al mapa de misiones">
+          <span class="icon">🗺️</span>
+          <span class="btn-text">Mapa</span>
+        </button>
+        <div class="game-branding">
+          <span class="game-tag">⚖️ Tecnología en Equilibrio</span>
+          <h1 id="screen-title">El Día de Alex</h1>
+        </div>
+      </div>
+
+      <div class="header-center">
+        <div id="mission-progress-indicator" class="hud-pill" style="display: none;">
+          <span class="pill-label">Misión</span>
+          <span id="mission-counter">1 de 3</span>
+        </div>
+        <div id="stars-display" class="hud-pill">
+          <span id="total-stars-count">⭐ 0 / 24</span>
+        </div>
+      </div>
+
+      <div class="header-right">
+        <button id="btn-hint" class="hud-btn hint-btn" title="Pedir una pista" aria-label="Pedir una pista">
+          <span class="icon">💡</span>
+          <span class="btn-text">Pista</span>
+          <span class="hint-badge" id="hint-available-dot"></span>
+        </button>
+        <button id="btn-sound" class="hud-btn sound-btn" title="Activar/Desactivar sonido" aria-label="Activar o desactivar sonido">
+          <span id="sound-icon" class="icon">🔊</span>
+          <span id="sound-text" class="btn-text">Sonido</span>
+        </button>
+        <button id="btn-restart" class="hud-btn subtle-btn" title="Reiniciar aventura" aria-label="Reiniciar progreso">
+          <span class="icon">🔄</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- ÁREA DE CONTENIDO PRINCIPAL DINÁMICA -->
+    <main id="game-container">
+      
+      <!-- ================= PANTALLA DE INICIO ================= -->
+      <section id="screen-intro" class="screen-view active">
+        <div class="intro-card">
+          <div class="intro-badge">✨ Recurso Educativo Interactivo</div>
+          <h2 class="intro-title">¡El Día de Alex!</h2>
+          <p class="intro-subtitle">⚖️ Encuentra el equilibrio entre la tecnología, el cuerpo y la diversión</p>
+
+          <div class="intro-visual">
+            <div id="intro-alex-container" class="alex-figure-box"></div>
+            <div class="speech-bubble intro-bubble">
+              <p><strong>¡Hola! Soy Alex.</strong> 👋<br>
+              Me encanta jugar videojuegos, estudiar y ver videos en mi computador. Pero a veces me canso, me duele la espalda o se me pasa el tiempo volando.<br><br>
+              ¿Quieres ser mi <strong>Entrenador/a del Equilibrio</strong> y ayudarme a organizar días geniales, saludables y felices?</p>
+            </div>
+          </div>
+
+          <div class="intro-core-message">
+            <div class="core-icon">💡</div>
+            <div class="core-text">
+              <strong>El Secreto del Equilibrio:</strong> La tecnología no es mala, ¡es una herramienta fantástica! Lo importante es combinarla con descansos, buena postura, luz adecuada, movimiento y tiempo con amigos y familia.
+            </div>
+          </div>
+
+          <div class="intro-actions">
+            <button id="btn-start-game" class="btn-primary-large pulse-animation">
+              <span>🚀 ¡Comenzar la Aventura!</span>
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================= PANTALLA MAPA DE NIVELES ================= -->
+      <section id="screen-map" class="screen-view">
+        <div class="map-wrapper">
+          <div class="map-header">
+            <h2>🗺️ Mapa de Misiones del Equilibrio</h2>
+            <p>Acompaña a Alex a través de 8 retos interactivos. ¡Aprende experimentando!</p>
+          </div>
+
+          <div class="map-path-container">
+            <!-- Los nodos de nivel se generan o configuran dinámicamente -->
+            <div class="map-grid" id="levels-map-grid">
+              <!-- Nivel 1 -->
+              <div class="map-node unlocked current" data-level="1" id="map-node-1">
+                <div class="node-badge">1</div>
+                <div class="node-icon">🌅</div>
+                <div class="node-info">
+                  <h3>Nivel 1</h3>
+                  <p>Construye el día de Alex</p>
+                  <div class="node-stars" id="stars-lvl-1">☆☆☆</div>
+                </div>
+                <button class="node-btn" onclick="GameApp.startLevel(1)">Jugar</button>
+              </div>
+
+              <!-- Nivel 2 -->
+              <div class="map-node locked" data-level="2" id="map-node-2">
+                <div class="node-badge">2</div>
+                <div class="node-icon">⏱️</div>
+                <div class="node-info">
+                  <h3>Nivel 2</h3>
+                  <p>¿Cuánto tiempo llevamos?</p>
+                  <div class="node-stars" id="stars-lvl-2">☆☆☆</div>
+                </div>
+                <button class="node-btn" onclick="GameApp.startLevel(2)" disabled>Bloqueado</button>
+              </div>
+
+              <!-- Nivel 3 -->
+              <div class="map-node locked" data-level="3" id="map-node-3">
+                <div class="node-badge">3</div>
+                <div class="node-icon">👀</div>
+                <div class="node-info">
+                  <h3>Nivel 3</h3>
+                  <p>Los ojos necesitan descansar</p>
+                  <div class="node-stars" id="stars-lvl-3">☆☆☆</div>
+                </div>
+                <button class="node-btn" onclick="GameApp.startLevel(3)" disabled>Bloqueado</button>
+              </div>
+
+              <!-- Nivel 4 -->
+              <div class="map-node locked" data-level="4" id="map-node-4">
+                <div class="node-badge">4</div>
+                <div class="node-icon">🪑</div>
+                <div class="node-info">
+                  <h3>Nivel 4</h3>
+                  <p>Detective de postura</p>
+                  <div class="node-stars" id="stars-lvl-4">☆☆☆</div>
+                </div>
+                <button class="node-btn" onclick="GameApp.startLevel(4)" disabled>Bloqueado</button>
+              </div>
+
+              <!-- Nivel 5 -->
+              <div class="map-node locked" data-level="5" id="map-node-5">
+                <div class="node-badge">5</div>
+                <div class="node-icon">💡</div>
+                <div class="node-info">
+                  <h3>Nivel 5</h3>
+                  <p>¡Algo está mal con la luz!</p>
+                  <div class="node-stars" id="stars-lvl-5">☆☆☆</div>
+                </div>
+                <button class="node-btn" onclick="GameApp.startLevel(5)" disabled>Bloqueado</button>
+              </div>
+
+              <!-- Nivel 6 -->
+              <div class="map-node locked" data-level="6" id="map-node-6">
+                <div class="node-badge">6</div>
+                <div class="node-icon">🏃</div>
+                <div class="node-info">
+                  <h3>Nivel 6</h3>
+                  <p>¡Alex necesita moverse!</p>
+                  <div class="node-stars" id="stars-lvl-6">☆☆☆</div>
+                </div>
+                <button class="node-btn" onclick="GameApp.startLevel(6)" disabled>Bloqueado</button>
+              </div>
+
+              <!-- Nivel 7 -->
+              <div class="map-node locked" data-level="7" id="map-node-7">
+                <div class="node-badge">7</div>
+                <div class="node-icon">⚖️</div>
+                <div class="node-info">
+                  <h3>Nivel 7</h3>
+                  <p>El gran reto: Equilibra el día</p>
+                  <div class="node-stars" id="stars-lvl-7">☆☆☆</div>
+                </div>
+                <button class="node-btn" onclick="GameApp.startLevel(7)" disabled>Bloqueado</button>
+              </div>
+
+              <!-- Nivel 8 -->
+              <div class="map-node locked" data-level="8" id="map-node-8">
+                <div class="node-badge">8</div>
+                <div class="node-icon">🚨</div>
+                <div class="node-info">
+                  <h3>Nivel 8</h3>
+                  <p>Casos prácticos de Alex</p>
+                  <div class="node-stars" id="stars-lvl-8">☆☆☆</div>
+                </div>
+                <button class="node-btn" onclick="GameApp.startLevel(8)" disabled>Bloqueado</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================= CONTENEDOR DE JUEGO POR NIVELES ================= -->
+      <section id="screen-play" class="screen-view">
+        <!-- Banner del nivel con instrucciones dinámicas -->
+        <div class="level-hud-banner">
+          <div class="level-intro-text">
+            <span id="level-badge" class="level-chip">NIVEL 1</span>
+            <h2 id="level-title">Construye el día de Alex</h2>
+            <p id="level-instruction" class="level-instruction">Arrastra actividades hacia la línea del tiempo para crear una mañana equilibrada.</p>
+          </div>
+          <div class="level-alex-corner" id="alex-corner-reaction">
+            <!-- Miniatura reactiva de Alex con expresión -->
+          </div>
+        </div>
+
+        <!-- Área de contenido del nivel inyectada según nivel actual -->
+        <div id="level-stage" class="level-stage">
+          <!-- Inyección dinámica de misiones -->
+        </div>
+
+        <!-- Barra inferior de acciones del nivel -->
+        <div class="level-footer-bar">
+          <div id="live-feedback-text" class="feedback-text" aria-live="polite">
+            💡 Selecciona o arrastra las tarjetas para organizar la rutina.
+          </div>
+          <div class="footer-buttons">
+            <button id="btn-check-action" class="btn-action check-btn">
+              <span>Comprobar Misión ✨</span>
+            </button>
+            <button id="btn-next-mission" class="btn-action next-btn" style="display: none;">
+              <span>Continuar ➡️</span>
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================= PANTALLA FINAL / GRADUACIÓN ================= -->
+      <section id="screen-victory" class="screen-view">
+        <div class="victory-card">
+          <div class="victory-header">
+            <div class="trophy-badge">🏆</div>
+            <h2>¡DÍA EN EQUILIBRIO COMPLETADO!</h2>
+            <p class="victory-subtitle">¡Felicitaciones! Eres un(a) auténtico(a) <strong>Maestro/a del Equilibrio Tecnológico</strong>.</p>
+          </div>
+
+          <div class="victory-body">
+            <div class="victory-alex" id="alex-celebration-box"></div>
+
+            <div class="victory-summary">
+              <h3>🌟 Lo Que Aprendiste y Lograste:</h3>
+              <ul class="learning-badges-list">
+                <li><span class="badge-icon">⏱️</span> <strong>Pausas Activas:</strong> Aprendiste a descansar el cuerpo y la mente cada cierto tiempo.</li>
+                <li><span class="badge-icon">👀</span> <strong>Cuidado Visual:</strong> La vista necesita mirar a lo lejos y parpadear para no resecarse.</li>
+                <li><span class="badge-icon">🪑</span> <strong>Postura Cómoda:</strong> Espalda apoyada, pantalla a la altura de los ojos y pies con soporte.</li>
+                <li><span class="badge-icon">💡</span> <strong>Luz Confortable:</strong> Evitar habitaciones oscuras y eliminar reflejos directos en la pantalla.</li>
+                <li><span class="badge-icon">🏃</span> <strong>Movimiento Vital:</strong> Moverse y jugar al aire libre es el mejor complemento para la mente.</li>
+                <li><span class="badge-icon">⚖️</span> <strong>Rutina Balanceada:</strong> La tecnología suma cuando convivimos con la familia, el estudio y el buen dormir.</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="victory-quote">
+            <blockquote>
+              "La tecnología es una herramienta fantástica. Cuando cuidamos nuestro cuerpo y disfrutamos de otras actividades, ¡todo funciona en armonía!"
+            </blockquote>
+          </div>
+
+          <div class="victory-actions">
+            <button class="btn-primary-large" onclick="GameApp.openMap()">
+              <span>🗺️ Ver Mapa y Jugar de Nuevo</span>
+            </button>
+            <button class="btn-secondary" onclick="window.print()">
+              <span>🖨️ Guardar o Imprimir Diploma</span>
+            </button>
+          </div>
+        </div>
+      </section>
+
+    </main>
+
+    <!-- ================= MODAL DE PISTAS ================= -->
+    <div id="modal-hint" class="modal-overlay" aria-hidden="true" role="dialog" aria-labelledby="hint-modal-title">
+      <div class="modal-box">
+        <div class="modal-header">
+          <div class="modal-icon">💡</div>
+          <h3 id="hint-modal-title">Pista del Entrenador</h3>
+          <button class="btn-close-modal" id="btn-close-hint" aria-label="Cerrar modal">&times;</button>
+        </div>
+        <div class="modal-content">
+          <p id="hint-text-1" class="hint-paragraph"></p>
+          <div id="hint-level-2-box" class="hint-extra" style="display: none;">
+            <p><strong>💡 Pista Adicional:</strong></p>
+            <p id="hint-text-2"></p>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button id="btn-request-more-hint" class="btn-secondary" style="display: none;">¿Otra pista?</button>
+          <button id="btn-dismiss-hint" class="btn-action">¡Entendido! 👍</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ================= MODAL DE REFUERZO / CELEBRACIÓN DE MISIÓN ================= -->
+    <div id="modal-feedback" class="modal-overlay" aria-hidden="true" role="dialog" aria-labelledby="feedback-title">
+      <div class="modal-box celebration-box">
+        <div class="modal-header">
+          <div id="modal-feedback-icon" class="modal-icon">🌟</div>
+          <h3 id="feedback-title">¡Gran Decisión!</h3>
+        </div>
+        <div class="modal-content">
+          <div id="modal-alex-feedback-visual" class="feedback-alex-wrapper"></div>
+          <p id="feedback-explanation" class="feedback-explanation-text"></p>
+          <div id="feedback-balance-meter" class="feedback-mini-meter"></div>
+        </div>
+        <div class="modal-footer">
+          <button id="btn-feedback-continue" class="btn-action check-btn">¡Siguiente Reto! 🚀</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ================= DIALOGO CONFIRMAR REINICIO ================= -->
+    <div id="modal-restart-confirm" class="modal-overlay" aria-hidden="true" role="dialog">
+      <div class="modal-box small-box">
+        <div class="modal-header">
+          <div class="modal-icon">🔄</div>
+          <h3>¿Reiniciar Aventura?</h3>
+        </div>
+        <div class="modal-content">
+          <p>¿Deseas reiniciar tu progreso y volver a jugar todos los niveles desde el inicio?</p>
+        </div>
+        <div class="modal-footer">
+          <button id="btn-cancel-restart" class="btn-secondary">Cancelar</button>
+          <button id="btn-confirm-restart" class="btn-danger">Sí, Reiniciar</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
